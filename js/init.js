@@ -86,6 +86,9 @@ $(document).ready(function() {
             "hi": "ゆ", "ro": "yu"
         },
         {
+            "hi": "よ", "ro": "yo"
+        },
+        {
             "hi": "た", "ro": "ta"
         },
         {
@@ -326,22 +329,50 @@ $(document).ready(function() {
 
     var inputEl = $("#input");
     var outputEl = $("#output");
+    var jpConvert = true;
 
-    $("#convertBtn").click(function (){
-        convert2JP();
+    //$("#convertBtn").click(function (){
+    //    if (jpConvert) {
+    //        convertToRomaji();
+    //    }
+    //    else {
+    //
+    //    }
+    //});
+
+    $(inputEl).on('input',function(e){
+        if (jpConvert) {
+            convertToRomaji();
+        }
+        else {
+            convertToJapanese();
+        }
     });
 
     $("#swapBtn").click(function (){
+        jpConvert = !jpConvert;
+
         var inputVal = inputEl.val();
         var outputVal = outputEl.val();
+
+        if (jpConvert) {
+            $("#input-title").text("Hiragana");
+            $("#output-title").text("Romaji");
+        }
+        else {
+            $("#input-title").text("Romaji");
+            $("#output-title").text("Hiragana");
+        }
+
 
         inputEl.val(outputVal);
         outputEl.val(inputVal);
     });
 
-    function convert2JP() {
-        var str = inputEl.val();
+    function convertToRomaji() {
 
+        var scriptType = $('input[name="scriptType"]:checked').val();
+        var str = inputEl.val();
         var output = "";
 
         for (var i = 0; i < str.length; i ++) {
@@ -357,15 +388,38 @@ $(document).ready(function() {
 
             for (var j = 0; j < charMap.length; j++) {
 
-                if (char == charMap[j]["hi"]) {
+                if (char == charMap[j][scriptType]) {
                     char = charMap[j]["ro"];
                     break;
                 }
             }
             output += char;
-        };
+        }
+        outputEl.val(output);
+    }
 
+    function convertToJapanese() {
 
+        var scriptType = $('input[name="scriptType"]:checked').val();
+        var str = inputEl.val();
+        var output = "";
+
+        for (var i = 0; i < str.length; i ++) {
+            var char = str[i];
+
+            if (char == "a" || char == "i" || char == "u" || char == "e" || char == "o" || char == "n") { // Check for single letter.
+                for (var j = 0; j < charMap.length; j++) {
+                    if (char == charMap[j]["ro"] ) {
+                        char = charMap[j][scriptType];
+                        break;
+                    }
+                }
+            }
+            else {
+
+            }
+            output += char;
+        }
         outputEl.val(output);
     }
 
